@@ -1,3 +1,5 @@
+from graphviz import Digraph
+
 r1 = [
  [1, 1, 1, 1, 1, 1],
  [0, 1, 1, 1, 1, 1],
@@ -69,6 +71,14 @@ r8 = [
  [1, 1, 1, 1, 0, 1],
  [1, 0, 1, 1, 0, 0],
 ]
+
+def render(relation, title, filename):
+    dot = Digraph(title, format='png')
+    for i in range(len(relation)):
+        for j in range(len(relation)):
+            if relation[i][j]:
+                dot.edge(str(i + 1), str(j + 1))
+    dot.render(filename, view=True)
 
 def reflexive(relation):
     for i, row in enumerate(relation):
@@ -156,24 +166,47 @@ def acyclic(relation):
     return True
 
 classes = {
-    'strict order': [irreflexive, asymmetric, transitive, acyclic],
-    'non-strict order': [reflexive, antisymmetric, transitive],
-    'weak ordering': [asymmetric, transitive, negatively_transitive],
-    'equivalence': [reflexive, symmetric, transitive],
-    'quasi order': [reflexive, transitive],
-    'tolerance': [reflexive, symmetric],
+    'Strict order': [irreflexive, asymmetric, transitive, acyclic],
+    'Non-strict order': [reflexive, antisymmetric, transitive],
+    'Weak ordering': [asymmetric, transitive, negatively_transitive],
+    'Equivalence': [reflexive, symmetric, transitive],
+    'Quasi order': [reflexive, transitive],
+    'Tolerance': [reflexive, symmetric],
 }
 
 relations = [r1, r2, r3, r4, r5, r6, r7, r8]
-results = []
 
-for r in relations:
-    r_props = []
-    for class_name in classes:
-        properties = classes[class_name]
-        if all(property(r) for property in properties):
-            r_props.append(class_name)
-            break
-    results.append(r_props)
+# for i, r in enumerate(relations):
+#     r_props = []
+#     no_class = True
+#     for class_name in classes:
+#         properties = classes[class_name]
+#         if all(property(r) for property in properties):
+#             no_class = False
+#             print(i, class_name)
+# #             render(r, class_name, 'r' + str(i + 1))
+#             break
+#     if no_class:
+#         print(i, 'no class')
+# #         render(r, 'No class', 'r' + str(i + 1))
 
-print(results)
+
+properties = {
+    reflexive: 'reflexive',
+    irreflexive: 'irreflexive',
+    symmetric: 'symmetric',
+    asymmetric: 'asymmetric',
+    antisymmetric: 'antisymmetric',
+    transitive: 'transitive',
+    negatively_transitive: 'negatively_transitive',
+    linked: 'linked',
+    weakly_linked: 'weakly_linked',
+    acyclic: 'acyclic',
+}
+
+for i, r in enumerate(relations):
+    props = []
+    for prop in properties:
+        if prop(r):
+            props.append(properties[prop])
+    print(i, props)
